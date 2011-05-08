@@ -10,9 +10,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import com.nijiko.permissions.PermissionHandler;
+import com.nijikokun.bukkit.Permissions.Permissions;
 
 
 public class HookShot extends JavaPlugin{
@@ -20,8 +24,11 @@ public class HookShot extends JavaPlugin{
 	private static final Logger log = Logger.getLogger("Minecraft");
 	 private final HookShotPlayerListener playerListener = new HookShotPlayerListener(this);
 	    private final HookShotBlockListener blockListener = new HookShotBlockListener(this);
+	    private final HookShotEntityListener entityListener = new HookShotEntityListener(this);
 	    private final HashMap<Player, Boolean> debugees = new HashMap<Player, Boolean>();
 	    public final HashMap<Player, ArrayList<Block>> HookShotUsers = new HashMap<Player, ArrayList<Block>>();
+	    public static PermissionHandler permissionHandler;
+	    private Permissions permissions;
 	    
 	    
 	    // NOTE: There should be no need to define a constructor any more for more info on moving from
@@ -51,7 +58,7 @@ public class HookShot extends JavaPlugin{
 	        pm.registerEvent(Event.Type.PLAYER_TOGGLE_SNEAK, playerListener, Priority.Normal, this);
 	        pm.registerEvent(Event.Type.PLAYER_ITEM_HELD, playerListener, Priority.Normal, this);
 	        pm.registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Priority.Normal, this);
-	        
+	        pm.registerEvent(Event.Type.ENTITY_DAMAGE, entityListener, Priority.Highest, this);	        
 	        //log.info("SALAMITEST STARTED");
 
 	        // Register our commands
@@ -59,6 +66,8 @@ public class HookShot extends JavaPlugin{
 	      //("debug").setExecutor(new SalamiTEstDebugCommand(this));
 
 	        // EXAMPLE: Custom code, here we just output some info so we can check all is well
+	        HookShotPermissions.initialize(getServer());
+	        setupPermissions();
 	        PluginDescriptionFile pdfFile = this.getDescription();
 	        System.out.println( pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!" );
 	    }
@@ -108,6 +117,25 @@ public class HookShot extends JavaPlugin{
 	    	return this.HookShotUsers.containsKey(player);
 	    }
 	    
+	    public void setupPermissions()
+	    {
+	    	Plugin permissionsPlugin = this.getServer().getPluginManager().getPlugin("Permissions");
+	    	if(this.permissionHandler == null)
+	    	{
+	    		if (permissionsPlugin != null)
+	    		{
+	    			this.permissionHandler = ((Permissions) permissionsPlugin).getHandler();
+	    		}
+	    		else {
+	    			log.info("Permission system not detected, defaulting to OP");
+	    		}
+	    	}
+	    }
+	    
+	    
+	    public Permissions getPermissions() {
+	    	return permissions;
+	    	}
 	}
 
 	

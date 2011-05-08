@@ -48,6 +48,10 @@ public class HookShotPlayerListener extends PlayerListener
     	World current = player.getWorld();
     	ItemStack is = player.getItemInHand();
     	
+  if(HookShotPermissions.getInstance().use(player))
+  {
+	  
+  
     if(action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK)
     {
     	
@@ -55,9 +59,19 @@ public class HookShotPlayerListener extends PlayerListener
     	if(is.getTypeId() == 262)
     	{
     		player.sendMessage(ChatColor.GREEN + "Hook Fired!");
-    		player.getItemInHand().setAmount(player.getItemInHand().getAmount() -1);
+    		
+    		if(player.getItemInHand().getAmount() > 1)
+    		{
+    			player.getItemInHand().setAmount(player.getItemInHand().getAmount() -1);
+    		}
+    		else
+    		{
+    			player.setItemInHand(null);
+    		}
+    		
     		//player.updateInventory();
     		zipline = player.shootArrow();
+    		zipline.getNearbyEntities(0,0,0);
     		
     	}
     	
@@ -70,6 +84,8 @@ public class HookShotPlayerListener extends PlayerListener
     	
     	
     }
+    
+  }
 }
     
     public void zipIn(Player player)
