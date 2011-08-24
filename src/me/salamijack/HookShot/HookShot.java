@@ -20,6 +20,7 @@ import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
 
 
+
 public class HookShot extends JavaPlugin{
 
 	private static final Logger log = Logger.getLogger("Minecraft");
@@ -67,6 +68,7 @@ public class HookShot extends JavaPlugin{
 	        pm.registerEvent(Event.Type.ENTITY_DAMAGE, entityListener, Priority.Highest, this);	  
 	        pm.registerEvent(Event.Type.VEHICLE_EXIT, vehicleListener, Priority.High, this);
 	        //log.info("SALAMITEST STARTED");
+	      
 
 	        // Register our commands
 	    //    getCommand("pos").setExecutor(new SalamiTestPosCommand(this));
@@ -142,7 +144,7 @@ public class HookShot extends JavaPlugin{
 	    			this.permissionHandler = ((Permissions) permissionsPlugin).getHandler();
 	    		}
 	    		else {
-	    			log.info("Permission system not detected, defaulting to OP");
+	    			//log.info("Permission system not detected, defaulting to OP");
 	    		}
 	    	}
 	    }
@@ -151,6 +153,8 @@ public class HookShot extends JavaPlugin{
 	    public Permissions getPermissions() {
 	    	return permissions;
 	    	}
+	    	
+	    	
 	}
 
 	

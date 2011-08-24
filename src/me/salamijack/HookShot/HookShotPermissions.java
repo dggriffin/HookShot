@@ -10,6 +10,8 @@ import org.bukkit.plugin.Plugin;
 import com.nijikokun.bukkit.Permissions.Permissions;
 
 
+
+
 //Thank you mcMMO sourcecode for helping me out!!
 
 public class HookShotPermissions {
@@ -28,7 +30,7 @@ public class HookShotPermissions {
             log.log(Level.INFO, "[HookShot] Permissions enabled.");
         } else {
             Logger log = Logger.getLogger("Minecraft");
-            log.log(Level.SEVERE, "[HookShot] Permissions isn't loaded, there are no restrictions.");
+            //log.log(Level.SEVERE, "[HookShot] Permissions isn't loaded, there are no restrictions.");
         }
 	}
 	
