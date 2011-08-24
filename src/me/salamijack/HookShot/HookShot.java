@@ -14,6 +14,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.config.Configuration;
 
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
@@ -25,10 +26,15 @@ public class HookShot extends JavaPlugin{
 	 private final HookShotPlayerListener playerListener = new HookShotPlayerListener(this);
 	    private final HookShotBlockListener blockListener = new HookShotBlockListener(this);
 	    private final HookShotEntityListener entityListener = new HookShotEntityListener(this);
+	    private final HookShotVehicleListener vehicleListener = new HookShotVehicleListener(this);
 	    private final HashMap<Player, Boolean> debugees = new HashMap<Player, Boolean>();
 	    public final HashMap<Player, ArrayList<Block>> HookShotUsers = new HashMap<Player, ArrayList<Block>>();
 	    public static PermissionHandler permissionHandler;
 	    private Permissions permissions;
+	    public boolean hookCost;
+	    public int hookItem;
+	    public int pullItem;
+	    public int pullCost;
 	    
 	    
 	    // NOTE: There should be no need to define a constructor any more for more info on moving from
@@ -58,7 +64,8 @@ public class HookShot extends JavaPlugin{
 	        pm.registerEvent(Event.Type.PLAYER_TOGGLE_SNEAK, playerListener, Priority.Normal, this);
 	        pm.registerEvent(Event.Type.PLAYER_ITEM_HELD, playerListener, Priority.Normal, this);
 	        pm.registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Priority.Normal, this);
-	        pm.registerEvent(Event.Type.ENTITY_DAMAGE, entityListener, Priority.Highest, this);	        
+	        pm.registerEvent(Event.Type.ENTITY_DAMAGE, entityListener, Priority.Highest, this);	  
+	        pm.registerEvent(Event.Type.VEHICLE_EXIT, vehicleListener, Priority.High, this);
 	        //log.info("SALAMITEST STARTED");
 
 	        // Register our commands
@@ -70,6 +77,14 @@ public class HookShot extends JavaPlugin{
 	        setupPermissions();
 	        PluginDescriptionFile pdfFile = this.getDescription();
 	        System.out.println( pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!" );
+	        
+	        Configuration config = getConfiguration();
+	        config.load();
+	        hookCost = config.getBoolean(" hook-cost", true);
+	        hookItem = config.getInt(" hook-item", 262);
+	        pullItem = config.getInt(" pull-item", 287);
+	        pullCost = config.getInt(" pull-costitem", 287);
+	        config.save();
 	    }
 
 	    public boolean isDebugging(final Player player) {
