@@ -67,6 +67,8 @@ public class HookShot extends JavaPlugin{
 	        pm.registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Priority.Normal, this);
 	        pm.registerEvent(Event.Type.ENTITY_DAMAGE, entityListener, Priority.Highest, this);	  
 	        pm.registerEvent(Event.Type.VEHICLE_EXIT, vehicleListener, Priority.High, this);
+	        pm.registerEvent(Event.Type.PROJECTILE_HIT, entityListener, Priority.High, this);
+	   
 	        //log.info("SALAMITEST STARTED");
 	      
 

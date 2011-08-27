@@ -17,6 +17,7 @@ import org.bukkit.entity.Egg;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -44,9 +45,12 @@ public class HookShotPlayerListener extends PlayerListener
 	public boolean isHooking = false;
     private final HookShot plugin;
     public Server server = null;
-    public LinkedList<playerProfile> climbingPlayers = new LinkedList<playerProfile>();
+    public static LinkedList<playerProfile> climbingPlayers = new LinkedList<playerProfile>();
     
  
+    
+   
+    
     
     public HookShotPlayerListener(HookShot instance) 
     {
@@ -79,9 +83,9 @@ public class HookShotPlayerListener extends PlayerListener
     	Location locheck = player.getLocation();
     
     	
- // if(HookShotPermissions.getInstance().use(player) || HookShotPermissions.getInstance().permissionsEnabled == false || player.hasPermission("hookshot.use"))
+  if(HookShotPermissions.getInstance().use(player) || HookShotPermissions.getInstance().permissionsEnabled == false || player.hasPermission("hookshot.use"))
     
-    if( player.hasPermission("hookshot.use"))
+    //if( player.hasPermission("hookshot.use"))
     	
     {
 	  
@@ -159,15 +163,27 @@ public class HookShotPlayerListener extends PlayerListener
         		
     		}
     		
+    		
     		if(me.hasBlock())
     		{
     			me.getBlock().setType(Material.AIR);
     		}
     		
     		
-	
+    		//HAS THE ARROW STOPPED MOVING?
+    		
+    		if(me.arrowHit == true)
+    		{
     			zipIn(player, loc, me.getArrow());
-            	me.setArrow(null);
+    		}
+    		
+    		else{
+    			player.sendMessage(ChatColor.RED + "You pull before the hook makes contact and it breaks! ");
+    			
+    		}
+            
+    	
+    		me.setArrow(null);
         			
     	}
         		
@@ -223,7 +239,40 @@ public class HookShotPlayerListener extends PlayerListener
     		
     			ride.setPassenger(player);
     		
-    			waiting(.8);
+    			
+    			
+    			//STANDARD DISTANCE FORMULA TO FIND OUT HOW FAR THE HOOK LOCATION IS FROM THE INITIAL FIRING POINT
+    			double distance = Math.sqrt(Math.pow(hit.getX() - initial.getX(),2) + Math.pow(hit.getY() - initial.getY(),2) + Math.pow(hit.getZ() - initial.getZ(),2));
+    		
+    			
+    			//The explanation behind the waiting method is simple. If the listener is set to wait for a given time, 
+    			//it simulates the pulling effect without factoring in the odd physics projectiles have when one sets an entity
+    			//to ride on it. Also, the server seems to have less "moved wrongly" issues if the user has pulled themselves
+    			//almost precisely to the point where they are teleporting before the wait is over.
+    			
+    			if(distance > 18)
+    			{
+    				waiting(1.2);
+    				//player.sendMessage("Extra Long");
+    						
+    			}
+    			else if(distance > 12)
+    			{
+    				waiting(1);
+    				//player.sendMessage("Long");
+    			}
+    			else if(distance > 6)
+    			{
+    				waiting(.8);
+    				//player.sendMessage("Medium");
+    			}
+    			
+    			else if (distance < 6)
+    			{
+    				waiting(.6);
+    				//player.sendMessage("Short");
+    			}
+    			//waiting(1);
     	
     		
     		
@@ -239,7 +288,7 @@ public class HookShotPlayerListener extends PlayerListener
     			if((idCheck != 324 && idCheck != 330 && idCheck != 44) && (idCheck2 != 324 && idCheck2 != 330 && idCheck2 != 44))
     			{
     				//player.sendMessage("Herp Derp");
-    				block.setType(Material.DIRT);
+    				block.setType(Material.GLASS);
 
         			current.setBlock(block);
         			current.setHasBlock(true);
@@ -396,6 +445,7 @@ class playerProfile
 	public Block stand;
 	public Arrow myArrow;
 	public LinkedList<Block> playerBlocks = new LinkedList<Block>();
+	public boolean arrowHit;
 	
 	public playerProfile(Location hook,Player name)
 	{
@@ -404,6 +454,12 @@ class playerProfile
 		player = name;
 	}
 	
+	public void setArrowHit(boolean b) {
+
+		arrowHit = b;
+		
+	}
+
 	public Arrow getArrow()
 	{
 		return myArrow;
